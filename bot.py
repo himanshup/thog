@@ -2,6 +2,7 @@ from discord.ext.commands import Bot
 from discord import Game
 from uszipcode import SearchEngine
 from datetime import datetime
+import discord
 import requests
 import asyncio
 import os
@@ -22,15 +23,29 @@ async def on_ready():
 @client.command()
 async def weather(zipcode):
     search = SearchEngine(simple_zipcode=True)
-    zipcode = search.by_zipcode(zipcode)
-    data = zipcode.to_dict()
+    results = search.by_zipcode(zipcode)
 
-    url = "https://api.darksky.net/forecast/" + DARK_SKY_API_TOKEN + "/" + str(
-        data['lat']) + "," + str(data['lng'])
-    response = requests.get(url)
-    value = response.json()['currently']['temperature']
-    await client.say('Current temp in ' + data['post_office_city'] + ' is ' +
-                     str(value))
+    if str(results.zipcode) == 'None':
+        await client.say('No results, try again.')
+    else:
+        data = results.to_dict()
+
+        url = "https://api.darksky.net/forecast/" + DARK_SKY_API_TOKEN + "/" + str(
+            data['lat']) + "," + str(data['lng'])
+        response = requests.get(url)
+        temp = response.json()['currently']['temperature']
+        icon = response.json()['currently']['icon']
+
+        embed = discord.Embed(
+            title=data['post_office_city'],
+            description=str(int(round(temp))) + chr(176),
+            colour=discord.Colour.blue()
+        )
+
+        embed.set_thumbnail(
+            url='https://darksky.net/images/weather-icons/' + icon + '.png')
+
+        await client.say(embed=embed)
 
 
 client.run(TOKEN)
