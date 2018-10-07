@@ -1,2 +1,3 @@
 discord.py
 uszipcode
+python-forecastio
