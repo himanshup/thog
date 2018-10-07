@@ -1,6 +1,8 @@
 from discord.ext.commands import Bot
 from discord import Game
 from uszipcode import SearchEngine
+from datetime import datetime
+import forecastio
 import requests
 import asyncio
 import os
@@ -24,12 +26,9 @@ async def weather(zipcode):
     zipcode = search.by_zipcode(zipcode)
     data = zipcode.to_dict()
 
-    url = "https://api.darksky.net/forecast/" + DARK_SKY_API_TOKEN + "/" + str(
-        data['lat']) + "," + str(data['lng'])
-    response = requests.get(url)
-    value = response.json()['currently']['temperature']
-    await client.say('Current temp in ' + data['post_office_city'] + ' is ' +
-                     str(value))
+    forecast = forecastio.load_forecast(
+        DARK_SKY_API_TOKEN, data['lat'], data['lng'])
+    await client.say(forecast)
 
 
 client.run(TOKEN)
