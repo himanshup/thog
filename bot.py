@@ -2,6 +2,7 @@ from discord.ext.commands import Bot
 from discord import Game
 from uszipcode import SearchEngine
 from datetime import datetime
+from pubg_python import PUBG, Shard
 import discord
 import requests
 import asyncio
@@ -11,7 +12,9 @@ import json
 TOKEN = os.environ['TOKEN']
 DARK_SKY_KEY = os.environ['DARK_SKY_KEY']
 RIOT_API_KEY = os.environ['RIOT_API_KEY']
-BOT_PREFIX = ('?', '!')
+PUBG_API_KEY = os.environ['PUBG_API_KEY']
+FORTNITE_KEY = os.environ['FORTNITE_KEY']
+BOT_PREFIX = ('?', '!', '.')
 
 client = Bot(command_prefix=BOT_PREFIX)
 
@@ -67,6 +70,7 @@ async def lolprofile(name=None):
         url = 'https://na1.api.riotgames.com/lol/summoner/v3/summoners/by-name/' + \
             name + '?api_key=' + RIOT_API_KEY
         response = requests.get(url)
+        # Check if summoner name exists
         if str(response) == '<Response [200]>':
             summonerName = response.json()['name']
             summonerId = str(response.json()['id'])
@@ -83,16 +87,17 @@ async def lolprofile(name=None):
                 url='http://ddragon.leagueoflegends.com/cdn/8.19.1/img/profileicon/' + str(icon) + '.png')
 
             # Uses summoner id from first call to get ranked info (rank, wins, losses, etc)
-            # If the user isn't ranked, it will instead embed an unranked icon
             rankInfoUrl = 'https://na1.api.riotgames.com/lol/league/v3/positions/by-summoner/' + \
                 summonerId + '?api_key=' + RIOT_API_KEY
             rankInfo = requests.get(rankInfoUrl)
+            # If the user isn't ranked, it will instead embed an unranked icon
             if len(rankInfo.json()) < 1:
                 rankIcon = 'https://res.cloudinary.com/dmrien29n/image/upload/v1534829199/provisional.png'
                 embed.set_image(url=rankIcon)
                 embed.add_field(name='Unranked', value='Unranked')
                 await client.say(embed=embed)
             else:
+                # Loop through the ranked info and find the data where queue type is equal to ranked solo
                 for info in rankInfo.json():
                     if info['queueType'] == 'RANKED_SOLO_5x5':
                         rankData = info
@@ -101,14 +106,14 @@ async def lolprofile(name=None):
                 tier = rankData['tier']
                 rank = rankData['rank']
                 queue = rankData['queueType']
-                lp = str(rankData['leaguePoints'])
+                lp = rankData['leaguePoints']
                 wins = rankData['wins']
                 losses = rankData['losses']
                 wratio = int(round(100 * wins / (wins + losses)))
                 rankIcon = 'https://res.cloudinary.com/dmrien29n/image/upload/v1534829199/' + tier + '.png'
 
                 embed.set_image(url=rankIcon)
-                embed.add_field(name=tier + ' ' + rank, value=lp + ' LP / ' + str(wins) +
+                embed.add_field(name=tier + ' ' + rank, value=str(lp) + ' LP / ' + str(wins) +
                                 'W ' + str(losses) + 'L\n' + 'Win Ratio ' + str(wratio) + '%\n' + leagueName)
 
                 await client.say(embed=embed)
