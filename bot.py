@@ -124,4 +124,18 @@ async def lolprofile(name=None):
     else:
         await client.say('Please enter a summoner name (without spaces) after the command.')
 
+
+@client.command()
+async def pubg(name):
+    api = PUBG(PUBG_API_KEY, Shard.PC_NA)
+
+
+@client.command()
+async def fortnite():
+    url = 'https://api.fortnitetracker.com/v1/profile/pc/ninja'
+    response = requests.get(url, headers={'TRN-Api-Key': FORTNITE_KEY})
+    print(response.json())
+    await client.say(response.json())
+
+
 client.run(TOKEN)
