@@ -2,7 +2,6 @@ from discord.ext.commands import Bot
 from discord import Game
 from uszipcode import SearchEngine
 from datetime import datetime
-from pubg_python import PUBG, Shard
 import discord
 import requests
 import asyncio
@@ -126,8 +125,84 @@ async def lolprofile(name=None):
 
 
 @client.command()
-async def pubg(name):
-    api = PUBG(PUBG_API_KEY, Shard.PC_NA)
+async def pubg(name=None):
+    if name:
+        playerUrl = 'https://api.pubg.com/shards/pc-na/players?filter[playerNames]=' + name
+        player = requests.get(playerUrl, headers={
+            'accept': 'application/vnd.api+json', 'Authorization': PUBG_API_KEY})
+
+        if ('errors' in player.json()):
+            await client.say('No players found, try again (names are case sensitive).')
+        else:
+            uid = player.json()['data'][0]['id']
+            name = player.json()['data'][0]['attributes']['name']
+
+            embed = discord.Embed(
+                title=name,
+                description='Platform: PC',
+                colour=discord.Colour.blue()
+            )
+            embed.set_thumbnail(
+                url='https://pbs.twimg.com/profile_images/1010210923829587968/U94bbY2k_400x400.jpg')
+
+            dataUrl = 'https://api.pubg.com/shards/steam/players/' + \
+                uid + '/seasons/division.bro.official.pc-2018-01'
+            response = requests.get(dataUrl, headers={
+                'accept': 'application/vnd.api+json', 'Authorization': PUBG_API_KEY})
+            data = response.json()['data']['attributes']['gameModeStats']
+            # Solos
+            wins = data['solo-fpp']['wins']
+            losses = data['solo-fpp']['losses']
+            top10 = data['solo-fpp']['top10s']
+            kills = data['solo-fpp']['kills']
+            assists = data['solo-fpp']['assists']
+            damage = data['solo-fpp']['damageDealt']
+            embed.add_field(name='----------SOLOS----------',
+                            value=str(wins + losses) + ' Matches', inline=False)
+            embed.add_field(name='Wins', value=str(wins), inline=True)
+            embed.add_field(name='Losses', value=str(losses), inline=True)
+            embed.add_field(name='Top 10', value=str(top10), inline=True)
+            embed.add_field(name='Kills', value=str(kills), inline=True)
+            embed.add_field(name='Assists', value=str(assists), inline=True)
+            embed.add_field(name='Damage', value=str(damage), inline=True)
+            # Duos
+            winsDuos = data['duo-fpp']['wins']
+            lossesDuos = data['duo-fpp']['losses']
+            top10Duos = data['duo-fpp']['top10s']
+            killsDuos = data['duo-fpp']['kills']
+            assistsDuos = data['duo-fpp']['assists']
+            damageDuos = data['duo-fpp']['damageDealt']
+            embed.add_field(name='----------DUOS----------',
+                            value=str(winsDuos + lossesDuos) + ' Matches', inline=False)
+            embed.add_field(name='Wins', value=str(winsDuos), inline=True)
+            embed.add_field(name='Losses', value=str(lossesDuos), inline=True)
+            embed.add_field(name='Top 10', value=str(top10Duos), inline=True)
+            embed.add_field(name='Kills', value=str(killsDuos), inline=True)
+            embed.add_field(name='Assists', value=str(
+                assistsDuos), inline=True)
+            embed.add_field(name='Damage', value=str(damageDuos), inline=True)
+            # Squads
+            winsSquads = data['duo-fpp']['wins']
+            lossesSquads = data['duo-fpp']['losses']
+            top10Squads = data['duo-fpp']['top10s']
+            killsSquads = data['duo-fpp']['kills']
+            assistsSquads = data['duo-fpp']['assists']
+            damageSquads = data['duo-fpp']['damageDealt']
+            embed.add_field(name='----------SQUADS----------',
+                            value=str(winsSquads + lossesSquads) + ' Matches', inline=False)
+            embed.add_field(name='Wins', value=str(winsSquads), inline=True)
+            embed.add_field(name='Losses', value=str(
+                lossesSquads), inline=True)
+            embed.add_field(name='Top 10', value=str(top10Squads), inline=True)
+            embed.add_field(name='Kills', value=str(killsSquads), inline=True)
+            embed.add_field(name='Assists', value=str(
+                assistsSquads), inline=True)
+            embed.add_field(name='Damage', value=str(
+                damageSquads), inline=True)
+
+            await client.say(embed=embed)
+    else:
+        await client.say('Please enter a pubg username after the command.')
 
 
 @client.command()
