@@ -142,6 +142,13 @@ async def fortnite(name=None):
         if ('curr_p2' in data['stats']) or ('curr_p10' in data['stats']) or ('curr_p9' in data['stats']):
             name = data['epicUserHandle']
             platform = data['platformNameLong']
+            embed = discord.Embed(
+                title=name,
+                description='Platform: ' + platform,
+                colour=discord.Colour.blue()
+            )
+            embed.set_thumbnail(
+                url='https://yt3.ggpht.com/a-/AN66SAxcsemSomK02qGAmiXnXzm0GR8LrSwHPMc-=s900-mo-c-c0xffffffff-rj-k-no')
             # Solos
             if ('curr_p2' in data['stats']):
                 wins = data['stats']['curr_p2']['top1']['value']
@@ -152,6 +159,14 @@ async def fortnite(name=None):
                 top10 = data['stats']['curr_p2']['top10']['value']
                 kpg = data['stats']['curr_p2']['kpg']['value']
                 matches = data['stats']['curr_p2']['matches']['value']
+                embed.add_field(name='----------SOLOS----------',
+                                value=matches + ' Matches', inline=False)
+                embed.add_field(name='Rating', value=rating, inline=True)
+                embed.add_field(name='Wins', value=wins, inline=True)
+                embed.add_field(name='Kills', value=kills, inline=True)
+                embed.add_field(name='Win %', value=winRatio, inline=True)
+                embed.add_field(name='K/D', value=kd, inline=True)
+                embed.add_field(name='Kills Per Game', value=kpg, inline=True)
 
             # Duos
             if ('curr_p10' in data['stats']):
@@ -163,7 +178,15 @@ async def fortnite(name=None):
                 top10Duos = data['stats']['curr_p10']['top10']['value']
                 kpgDuos = data['stats']['curr_p10']['kpg']['value']
                 matchesDuos = data['stats']['curr_p10']['matches']['value']
-
+                embed.add_field(name='----------DUOS----------',
+                                value=matchesDuos + ' Matches', inline=False)
+                embed.add_field(name='Rating', value=ratingDuos, inline=True)
+                embed.add_field(name='Wins', value=winsDuos, inline=True)
+                embed.add_field(name='Kills', value=killsDuos, inline=True)
+                embed.add_field(name='Win %', value=winRatioDuos, inline=True)
+                embed.add_field(name='K/D', value=kdDuos, inline=True)
+                embed.add_field(name='Kills Per Game',
+                                value=kpgDuos, inline=True)
             # Squads
             if ('curr_p9' in data['stats']):
                 winsSquads = data['stats']['curr_p9']['top1']['value']
@@ -174,42 +197,20 @@ async def fortnite(name=None):
                 top10Squads = data['stats']['curr_p9']['top10']['value']
                 kpgSquads = data['stats']['curr_p9']['kpg']['value']
                 matchesSquads = data['stats']['curr_p9']['matches']['value']
+                embed.add_field(name='----------SQUADS----------',
+                                value=matchesSquads + ' Matches', inline=False)
+                embed.add_field(name='Rating', value=ratingSquads, inline=True)
+                embed.add_field(
+                    name='Wins', value=winsSquads, inline=True)
+                embed.add_field(
+                    name='Kills', value=killsSquads, inline=True)
+                embed.add_field(
+                    name='Win %', value=winRatioSquads, inline=True)
+                embed.add_field(
+                    name='K/D', value=kdSquads, inline=True)
+                embed.add_field(name='Kills Per Game',
+                                value=kpgSquads, inline=True)
 
-            embed = discord.Embed(
-                title=name,
-                description='Platform: ' + platform,
-                colour=discord.Colour.blue()
-            )
-            embed.set_thumbnail(
-                url='https://yt3.ggpht.com/a-/AN66SAxcsemSomK02qGAmiXnXzm0GR8LrSwHPMc-=s900-mo-c-c0xffffffff-rj-k-no')
-            # Solos
-            embed.add_field(name='----------SOLOS----------',
-                            value=matches + ' Matches', inline=False)
-            embed.add_field(name='Rating', value=rating, inline=True)
-            embed.add_field(name='Wins', value=wins, inline=True)
-            embed.add_field(name='Kills', value=kills, inline=True)
-            embed.add_field(name='Win %', value=winRatio, inline=True)
-            embed.add_field(name='K/D', value=kd, inline=True)
-            embed.add_field(name='Kills Per Game', value=kpg, inline=True)
-            # Duos
-            embed.add_field(name='----------DUOS----------',
-                            value=matchesDuos + ' Matches', inline=False)
-            embed.add_field(name='Rating', value=ratingDuos, inline=True)
-            embed.add_field(name='Wins', value=winsDuos, inline=True)
-            embed.add_field(name='Kills', value=killsDuos, inline=True)
-            embed.add_field(name='Win %', value=winRatioDuos, inline=True)
-            embed.add_field(name='K/D', value=kdDuos, inline=True)
-            embed.add_field(name='Kills Per Game', value=kpgDuos, inline=True)
-            # Squads
-            embed.add_field(name='----------SQUADS----------',
-                            value=matchesSquads + ' Matches', inline=False)
-            embed.add_field(name='Rating', value=ratingSquads, inline=True)
-            embed.add_field(name='Wins', value=winsSquads, inline=True)
-            embed.add_field(name='Kills', value=killsSquads, inline=True)
-            embed.add_field(name='Win %', value=winRatioSquads, inline=True)
-            embed.add_field(name='K/D', value=kdSquads, inline=True)
-            embed.add_field(name='Kills Per Game',
-                            value=kpgSquads, inline=True)
             embed.set_footer(
                 text='Information provided by fortnitetracker.com')
             await client.say(embed=embed)
