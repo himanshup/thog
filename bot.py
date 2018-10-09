@@ -118,9 +118,9 @@ async def lolprofile(name=None):
 
                 await client.say(embed=embed)
         elif str(response) == '<Response [404]>':
-            await client.say('No results for ' + name + ', try again (without spaces)')
+            return await client.say('No results for ' + name + ', try again (without spaces)')
         else:
-            await client.say('An error occured.')
+            return await client.say('An error occured.')
     else:
         await client.say('Please enter a summoner name (without spaces) after the command.')
 
@@ -131,11 +131,92 @@ async def pubg(name):
 
 
 @client.command()
-async def fortnite():
-    url = 'https://api.fortnitetracker.com/v1/profile/pc/ninja'
-    response = requests.get(url, headers={'TRN-Api-Key': FORTNITE_KEY})
-    print(response.json())
-    await client.say(response.json())
+async def fortnite(name=None):
+    if name:
+        url = 'https://api.fortnitetracker.com/v1/profile/pc/' + name
+        response = requests.get(url, headers={'TRN-Api-Key': FORTNITE_KEY})
+        data = response.json()
 
+        if 'error' in data:
+            return await client.say('Player Not Found.')
+        if ('curr_p2' in data['stats']) or ('curr_p10' in data['stats']) or ('curr_p9' in data['stats']):
+            name = data['epicUserHandle']
+            platform = data['platformNameLong']
+            # Solos
+            if ('curr_p2' in data['stats']):
+                wins = data['stats']['curr_p2']['top1']['value']
+                rating = data['stats']['curr_p2']['trnRating']['value']
+                kd = data['stats']['curr_p2']['kd']['value']
+                winRatio = data['stats']['curr_p2']['winRatio']['value']
+                kills = data['stats']['curr_p2']['kills']['value']
+                top10 = data['stats']['curr_p2']['top10']['value']
+                kpg = data['stats']['curr_p2']['kpg']['value']
+                matches = data['stats']['curr_p2']['matches']['value']
+
+            # Duos
+            if ('curr_p10' in data['stats']):
+                winsDuos = data['stats']['curr_p10']['top1']['value']
+                ratingDuos = data['stats']['curr_p10']['trnRating']['value']
+                kdDuos = data['stats']['curr_p10']['kd']['value']
+                winRatioDuos = data['stats']['curr_p10']['winRatio']['value']
+                killsDuos = data['stats']['curr_p10']['kills']['value']
+                top10Duos = data['stats']['curr_p10']['top10']['value']
+                kpgDuos = data['stats']['curr_p10']['kpg']['value']
+                matchesDuos = data['stats']['curr_p10']['matches']['value']
+
+            # Squads
+            if ('curr_p9' in data['stats']):
+                winsSquads = data['stats']['curr_p9']['top1']['value']
+                ratingSquads = data['stats']['curr_p9']['trnRating']['value']
+                kdSquads = data['stats']['curr_p9']['kd']['value']
+                winRatioSquads = data['stats']['curr_p9']['winRatio']['value']
+                killsSquads = data['stats']['curr_p9']['kills']['value']
+                top10Squads = data['stats']['curr_p9']['top10']['value']
+                kpgSquads = data['stats']['curr_p9']['kpg']['value']
+                matchesSquads = data['stats']['curr_p9']['matches']['value']
+
+            embed = discord.Embed(
+                title=name,
+                description='Platform: ' + platform,
+                colour=discord.Colour.blue()
+            )
+            embed.set_thumbnail(
+                url='https://yt3.ggpht.com/a-/AN66SAxcsemSomK02qGAmiXnXzm0GR8LrSwHPMc-=s900-mo-c-c0xffffffff-rj-k-no')
+            # Solos
+            embed.add_field(name='----------SOLOS----------',
+                            value=matches + ' Matches', inline=False)
+            embed.add_field(name='Rating', value=rating, inline=True)
+            embed.add_field(name='Wins', value=wins, inline=True)
+            embed.add_field(name='Kills', value=kills, inline=True)
+            embed.add_field(name='Win %', value=winRatio, inline=True)
+            embed.add_field(name='K/D', value=kd, inline=True)
+            embed.add_field(name='Kills Per Game', value=kpg, inline=True)
+            # Duos
+            embed.add_field(name='----------DUOS----------',
+                            value=matchesDuos + ' Matches', inline=False)
+            embed.add_field(name='Rating', value=ratingDuos, inline=True)
+            embed.add_field(name='Wins', value=winsDuos, inline=True)
+            embed.add_field(name='Kills', value=killsDuos, inline=True)
+            embed.add_field(name='Win %', value=winRatioDuos, inline=True)
+            embed.add_field(name='K/D', value=kdDuos, inline=True)
+            embed.add_field(name='Kills Per Game', value=kpgDuos, inline=True)
+            # Squads
+            embed.add_field(name='----------SQUADS----------',
+                            value=matchesSquads + ' Matches', inline=False)
+            embed.add_field(name='Rating', value=ratingSquads, inline=True)
+            embed.add_field(name='Wins', value=winsSquads, inline=True)
+            embed.add_field(name='Kills', value=killsSquads, inline=True)
+            embed.add_field(name='Win %', value=winRatioSquads, inline=True)
+            embed.add_field(name='K/D', value=kdSquads, inline=True)
+            embed.add_field(name='Kills Per Game',
+                            value=kpgSquads, inline=True)
+            embed.set_footer(
+                text='Information provided by fortnitetracker.com')
+            await client.say(embed=embed)
+        else:
+            await client.say(name + ' has no player data.')
+
+    else:
+        await client.say('Please enter an Epic username after the command.')
 
 client.run(TOKEN)
