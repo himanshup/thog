@@ -1,2 +1,4 @@
 discord.py
 uszipcode
+youtube_dl
+PyNaCl
