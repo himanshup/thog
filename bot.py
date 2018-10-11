@@ -7,6 +7,7 @@ import requests
 import asyncio
 import os
 import json
+import re
 
 TOKEN = os.environ['TOKEN']
 # DARK_SKY_KEY = os.environ['DARK_SKY_KEY']
@@ -27,7 +28,7 @@ async def on_ready():
 
 @client.event
 async def on_member_join(member):
-    client.create_role(member.server, name=str(member.id))
+    await client.create_role(member.server, name=str(member.id))
     role = discord.utils.get(
         member.server.roles, name=str(member.id))
     await client.add_roles(member, role)
@@ -49,6 +50,17 @@ async def kick(username: discord.Member):
 async def ban(username: discord.Member, delete_message_days=0):
     await client.ban(username, delete_message_days)
     await client.say('User has been banned.')
+
+
+@client.command(pass_context=True)
+async def unban(ctx, username):
+    bans = await client.get_bans(ctx.message.server)
+    # Remove uneeded characters from input
+    id = re.sub('[<>@]', '', username)
+    for user in bans:
+        if id == user.id:
+            await client.unban(ctx.message.server, user)
+            await client.say('Unbanned user.')
 
 
 @client.command(pass_context=True)
@@ -92,7 +104,11 @@ async def color(ctx, color):
         if role:
             await client.edit_role(ctx.message.server, role, colour=discord.Colour(int(color, 16)))
         else:
-            print('Role does not exist')
+            print('Role does not exist, creating it now...')
+            await client.create_role(ctx.message.server, name=str(ctx.message.author.id), colour=discord.Colour(int(color, 16)))
+            newRole = discord.utils.get(
+                ctx.message.author.server.roles, name=str(ctx.message.author.id))
+            await client.add_roles(ctx.message.author, newRole)
     except:
         await client.say('Please enter a Hex color.')
 
