@@ -25,7 +25,7 @@ async def on_ready():
 
 @client.event
 async def on_member_join(member):
-    await client.create_role(member.server, name=str(member.id))
+    client.create_role(member.server, name=str(member.id))
     role = discord.utils.get(
         member.server.roles, name=str(member.id))
     await client.add_roles(member, role)
@@ -57,7 +57,12 @@ async def ban(username: discord.Member, delete_message_days=0):
 
 @client.command(pass_context=True)
 async def color(ctx, color):
-    print('test')
+    role = discord.utils.get(
+        ctx.message.author.server.roles, name=str(ctx.message.author.id))
+    if role:
+        await client.edit_role(ctx.message.server, role, colour=discord.Colour(int(color, 16)))
+    else:
+        print('Role does not exist')
 
 
 @client.command(name='weather', description='Get weather forecast when given a zipcode.', brief='Weather forecast')
