@@ -17,6 +17,8 @@ BOT_PREFIX = ('.')
 
 client = Bot(command_prefix=BOT_PREFIX)
 
+players = {}
+
 
 @client.event
 async def on_ready():
@@ -37,12 +39,6 @@ async def on_member_remove(member):
     await client.delete_role(member.server, role)
 
 
-@client.command(pass_context=True)
-async def play(ctx, url):
-    author = ctx.message.author
-    voiceChannel = author.voice_channel
-
-
 @client.command()
 async def kick(username: discord.Member):
     await client.kick(username)
@@ -56,13 +52,49 @@ async def ban(username: discord.Member, delete_message_days=0):
 
 
 @client.command(pass_context=True)
+async def play(ctx, url):
+    server = ctx.message.server
+    author = ctx.message.author
+    voiceChannel = author.voice_channel
+    vc = await client.join_voice_channel(voiceChannel)
+
+    player = await vc.create_ytdl_player(url)
+    players[server.id] = player
+    player.start()
+
+
+@client.command(pass_context=True)
+async def stop(ctx):
+    id = ctx.message.server.id
+    server = ctx.message.server
+    voice_client = client.voice_client_in(server)
+    players[id].stop()
+    await voice_client.disconnect()
+
+
+@client.command(pass_context=True)
+async def pause(ctx):
+    id = ctx.message.server.id
+    players[id].pause()
+
+
+@client.command(pass_context=True)
+async def resume(ctx):
+    id = ctx.message.server.id
+    players[id].resume()
+
+
+@client.command(pass_context=True)
 async def color(ctx, color):
-    role = discord.utils.get(
-        ctx.message.author.server.roles, name=str(ctx.message.author.id))
-    if role:
-        await client.edit_role(ctx.message.server, role, colour=discord.Colour(int(color, 16)))
-    else:
-        print('Role does not exist')
+    try:
+        role = discord.utils.get(
+            ctx.message.author.server.roles, name=str(ctx.message.author.id))
+        if role:
+            await client.edit_role(ctx.message.server, role, colour=discord.Colour(int(color, 16)))
+        else:
+            print('Role does not exist')
+    except:
+        await client.say('Please enter a Hex color.')
 
 
 @client.command(name='weather', description='Get weather forecast when given a zipcode.', brief='Weather forecast')
