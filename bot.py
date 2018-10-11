@@ -10,10 +10,10 @@ import json
 import re
 
 TOKEN = os.environ['TOKEN']
-# DARK_SKY_KEY = os.environ['DARK_SKY_KEY']
-# RIOT_API_KEY = os.environ['RIOT_API_KEY']
-# PUBG_API_KEY = os.environ['PUBG_API_KEY']
-# FORTNITE_KEY = os.environ['FORTNITE_KEY']
+DARK_SKY_KEY = os.environ['DARK_SKY_KEY']
+RIOT_API_KEY = os.environ['RIOT_API_KEY']
+PUBG_API_KEY = os.environ['PUBG_API_KEY']
+FORTNITE_KEY = os.environ['FORTNITE_KEY']
 BOT_PREFIX = ('.')
 
 client = Bot(command_prefix=BOT_PREFIX)
