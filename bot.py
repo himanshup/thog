@@ -19,6 +19,14 @@ BOT_PREFIX = ('.')
 client = Bot(command_prefix=BOT_PREFIX)
 
 players = {}
+queues = {}
+
+
+def checkQueue(id):
+    if queues[id] != []:
+        player = queues[id].pop(0)
+        players[id] = player
+        player.start()
 
 
 @client.event
@@ -70,9 +78,24 @@ async def play(ctx, url):
     voiceChannel = author.voice_channel
     vc = await client.join_voice_channel(voiceChannel)
 
-    player = await vc.create_ytdl_player(url)
+    player = await vc.create_ytdl_player(url, after=lambda: checkQueue(server.id))
     players[server.id] = player
     player.start()
+
+
+@client.command(pass_context=True)
+async def queue(ctx, url):
+    server = ctx.message.server
+    author = ctx.message.author
+    vc = client.voice_client_in(server)
+
+    player = await vc.create_ytdl_player(url, after=lambda: checkQueue(server.id))
+
+    if server.id in queues:
+        queues[server.id].append(player)
+    else:
+        queues[server.id] = [player]
+    await client.say('Queued the video.')
 
 
 @client.command(pass_context=True)
