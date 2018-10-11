@@ -9,11 +9,11 @@ import os
 import json
 
 TOKEN = os.environ['TOKEN']
-DARK_SKY_KEY = os.environ['DARK_SKY_KEY']
-RIOT_API_KEY = os.environ['RIOT_API_KEY']
-PUBG_API_KEY = os.environ['PUBG_API_KEY']
-FORTNITE_KEY = os.environ['FORTNITE_KEY']
-BOT_PREFIX = ('?', '!', '.')
+# DARK_SKY_KEY = os.environ['DARK_SKY_KEY']
+# RIOT_API_KEY = os.environ['RIOT_API_KEY']
+# PUBG_API_KEY = os.environ['PUBG_API_KEY']
+# FORTNITE_KEY = os.environ['FORTNITE_KEY']
+BOT_PREFIX = ('.')
 
 client = Bot(command_prefix=BOT_PREFIX)
 
@@ -21,6 +21,43 @@ client = Bot(command_prefix=BOT_PREFIX)
 @client.event
 async def on_ready():
     await client.change_presence(game=Game(name="with humans"))
+
+
+@client.event
+async def on_member_join(member):
+    await client.create_role(member.server, name=str(member.id))
+    role = discord.utils.get(
+        member.server.roles, name=str(member.id))
+    await client.add_roles(member, role)
+
+
+@client.event
+async def on_member_remove(member):
+    role = discord.utils.get(member.server.roles, name=str(member.id))
+    await client.delete_role(member.server, role)
+
+
+@client.command(pass_context=True)
+async def play(ctx, url):
+    author = ctx.message.author
+    voiceChannel = author.voice_channel
+
+
+@client.command()
+async def kick(username: discord.Member):
+    await client.kick(username)
+    await client.say('User has been kicked.')
+
+
+@client.command()
+async def ban(username: discord.Member, delete_message_days=0):
+    await client.ban(username, delete_message_days)
+    await client.say('User has been banned.')
+
+
+@client.command(pass_context=True)
+async def color(ctx, color):
+    print('test')
 
 
 @client.command(name='weather', description='Get weather forecast when given a zipcode.', brief='Weather forecast')
@@ -62,8 +99,8 @@ async def weather(zipcode=None):
         await client.say('Please enter a zipcode after the command (ex: ?weather 12345)')
 
 
-@client.command(name='lolprofile', description='Get LoL summoner info by summoner name', brief='LoL Summoner info')
-async def lolprofile(name=None):
+@client.command(name='lol', description='Get LoL summoner info by summoner name', brief='LoL Summoner info')
+async def lol(name=None):
     if name:
         # Gets summoner info (id, account id, name, level, icon) for future api calls
         url = 'https://na1.api.riotgames.com/lol/summoner/v3/summoners/by-name/' + \
@@ -124,7 +161,7 @@ async def lolprofile(name=None):
         await client.say('Please enter a summoner name (without spaces) after the command.')
 
 
-@client.command()
+@client.command(name='pubg', description='Displays user stats for the current season (Solos, Duos, Squads)', brief='Displays PUBG stats')
 async def pubg(name=None):
     if name:
         playerUrl = 'https://api.pubg.com/shards/pc-na/players?filter[playerNames]=' + name
@@ -205,7 +242,7 @@ async def pubg(name=None):
         await client.say('Please enter a pubg username after the command.')
 
 
-@client.command()
+@client.command(name='fortnite', description='Displays user stats for the current season (Solos, Duos, Squads)', brief='Displays Fortnite stats')
 async def fortnite(name=None):
     if name:
         url = 'https://api.fortnitetracker.com/v1/profile/pc/' + name
