@@ -23,3 +23,10 @@ Simple Discord bot with video game commands (LoL, PUBG, Fortnite) and a weather 
 ## Credits
 
 Thanks to [fortnitetracker](https://fortnitetracker.com/) for letting me use their API! :)
+
+## Screenshots
+![Image 1](https://raw.githubusercontent.com/himanshup/thog/master/screenshots/Screen%20Shot%202018-12-04%20at%208.11.01%20AM.png)
+
+![Image 12](https://raw.githubusercontent.com/himanshup/thog/master/screenshots/Screen%20Shot%202018-12-04%20at%208.08.31%20AM.png)
+
+![Image 3](https://raw.githubusercontent.com/himanshup/thog/master/screenshots/Screen%20Shot%202018-12-04%20at%208.10.29%20AM.png)
