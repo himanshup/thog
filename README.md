@@ -1,8 +1,8 @@
 # thog
 
-Simple Discord bot with video game commands (LoL, PUBG, Fortnite) and a weather command. You can use `.` as a prefix for commands. A work in progress.
+Discord bot with video game (LoL, PUBG, Fortnite) and other random commands. You can use `.` as a prefix for commands.
 
-## Interaction
+## Usage
 
 | Commands             | Description                                               |
 | -------------------- | --------------------------------------------------------- |
@@ -20,13 +20,20 @@ Simple Discord bot with video game commands (LoL, PUBG, Fortnite) and a weather 
 | `.ban <@username>`   | Bans the mentioned user                                   |
 | `.unban <@username>` | Removes the mentioned user for the banlist                |
 
+## Run locally
+
+1. [Create a bot account](https://discordpy.readthedocs.io/en/rewrite/discord.html) and copy the token
+2. Create accounts to get a Dark Sky, LoL, PUBG, and Fortnite API key (just google '<name> API key')
+3. Create a .env file and add your API keys (TOKEN is the token from step 1):
+
+```
+TOKEN=''
+DARK_SKY_KEY=''
+RIOT_API_KEY=''
+PUBG_API_KEY=''
+FORTNITE_KEY=''
+```
+
 ## Credits
 
 Thanks to [fortnitetracker](https://fortnitetracker.com/) for letting me use their API! :)
-
-## Screenshots
-![Image 1](https://raw.githubusercontent.com/himanshup/thog/master/screenshots/Screen%20Shot%202018-12-04%20at%208.11.01%20AM.png)
-
-![Image 12](https://raw.githubusercontent.com/himanshup/thog/master/screenshots/Screen%20Shot%202018-12-04%20at%208.08.31%20AM.png)
-
-![Image 3](https://raw.githubusercontent.com/himanshup/thog/master/screenshots/Screen%20Shot%202018-12-04%20at%208.10.29%20AM.png)
