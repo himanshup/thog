@@ -1,4 +1,4 @@
-# thog
+# Winston
 
 Discord bot with video game (LoL, PUBG, Fortnite) and other random commands. You can use `.` as a prefix for commands.
 
@@ -22,6 +22,12 @@ Discord bot with video game (LoL, PUBG, Fortnite) and other random commands. You
 
 ## Run locally
 
+```
+git clone https://github.com/himanshup/winston.git
+cd winston
+pip install -r requirements.txt
+```
+
 1. [Create a bot account](https://discordpy.readthedocs.io/en/rewrite/discord.html) and copy the token
 2. Create accounts to get a Dark Sky, LoL, PUBG, and Fortnite API key (just google '<name> API key')
 3. Create a .env file and add your API keys (TOKEN is the token from step 1):
@@ -33,6 +39,8 @@ RIOT_API_KEY=''
 PUBG_API_KEY=''
 FORTNITE_KEY=''
 ```
+
+4. Run `python bot.py` and your bot should be online
 
 ## Credits
 
